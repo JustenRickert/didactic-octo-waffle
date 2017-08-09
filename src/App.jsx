@@ -46,7 +46,8 @@ export default class App extends Component {
 
     this.screen = {
       width: 500,
-      height: 500
+      height: 500,
+      ratio: window.devicePixelRatio || 1
     }
 
     this.character = new Character({
@@ -107,8 +108,8 @@ export default class App extends Component {
   }
 
   drawLines(context, lineLength) {
-    const xLines = this.state.screen.width / lineLength
-    const yLines = this.state.screen.height / lineLength
+    const xLines = this.screen.width / lineLength
+    const yLines = this.screen.height / lineLength
 
     // Draw
     context.save()
@@ -120,7 +121,7 @@ export default class App extends Component {
     for (let x = 0; x <= xLines; x++) {
       context.beginPath()
       context.moveTo(lineLength * x, 0)
-      context.lineTo(lineLength * x, this.state.screen.height)
+      context.lineTo(lineLength * x, this.screen.height)
       context.closePath()
       context.fill()
       context.stroke()
@@ -128,7 +129,7 @@ export default class App extends Component {
     for (let y = 0; y <= yLines; y++) {
       context.beginPath(0, lineLength * y)
       context.moveTo(0, lineLength * y)
-      context.lineTo(this.state.screen.width, lineLength * y)
+      context.lineTo(this.screen.width, lineLength * y)
       context.closePath()
       context.fill()
       context.stroke()
@@ -211,7 +212,7 @@ export default class App extends Component {
     context.save()
     context.fillStyle = "#000"
     context.globalAlpha = 0.4
-    context.fillRect(0, 0, this.state.screen.width, this.state.screen.height)
+    context.fillRect(0, 0, this.screen.width, this.screen.height)
     context.globalAlpha = 1
     context.restore()
 
@@ -226,8 +227,8 @@ export default class App extends Component {
       <div className="App">
         <canvas
           ref="canvas"
-          width={this.state.screen.width * this.state.screen.ratio}
-          height={this.state.screen.height * this.state.screen.ratio}
+          width={this.screen.width * this.screen.ratio}
+          height={this.screen.height * this.screen.ratio}
         />
       </div>
     )
