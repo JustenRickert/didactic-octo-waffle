@@ -1,3 +1,16 @@
+/**
+   Direction vector for 2 dimensional space
+   @typedef {Object} Direction
+   @property {number} x - Horizontal direction
+   @property {number} y - Vertical direction
+ */
+
+/**
+   Returns the angle associated to the direction vector. So if an arrow points
+   to the left, that is considered 0 degrees.
+   @param {Direction} direction
+   @return {number} angle
+ */
 export function directionMatrixToAngle(direction) {
   const directions = [
     {x: 0, y: -1},
@@ -16,5 +29,12 @@ export function directionMatrixToAngle(direction) {
   }
 }
 
-export const clamp = number => (min, max) =>
-  Math.min(Math.max(number, min), max)
+/**
+   Returns the number if between the min or the max, otherwise clamps the number
+   to either min or max (whichever is closer).
+   @param {number} number
+ */
+export const clamp = number => (
+  /** @type {number} */ min,
+  /** @type {number} */ max
+) => Math.min(Math.max(number, min), max)

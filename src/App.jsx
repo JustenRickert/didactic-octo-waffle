@@ -16,6 +16,15 @@ const KEY = {
   SPACE: 32
 }
 
+/**
+   @typedef {Object} Keys - Has boolean properties indicating keypress status
+   @property {boolean} left - KEY.LEFT
+   @property {boolean} right - KEY.RIGHT
+   @property {boolean} up - KEY.UP
+   @property {boolean} down - KEY.DOWN
+*/
+
+/** @param {Keys} keys */
 function keysToDirection(keys) {
   const direction = {x: 0, y: 0}
   if (keys.left) direction.x = -1
@@ -34,13 +43,13 @@ export default class App extends Component {
        *   height: 500,
        *   ratio: window.devicePixelRation || 1
        * },*/
-      /* startingTime: new Date(),
-       * context: null,*/
+      startingTime: new Date(),
+      context: null,
       keys: {
-        left: 0,
-        right: 0,
-        up: 0,
-        down: 0
+        left: false,
+        right: false,
+        up: false,
+        down: false
       }
     }
 
@@ -72,6 +81,10 @@ export default class App extends Component {
      * })*/
   }
 
+  /**
+     @param {boolean} value
+     @param {Event} e
+   */
   handleKeys(value, e) {
     let keys = this.state.keys
     if (e.keyCode === KEY.LEFT || e.keyCode === KEY.A) keys.left = value
@@ -107,6 +120,11 @@ export default class App extends Component {
     /* this.createObject(character, "character")*/
   }
 
+  /**
+     Draws the lines across the whole board.
+     @param {CanvasRenderingContext2D} context
+     @param {number} lineLength - Number of pixel between each line
+   */
   drawLines(context, lineLength) {
     const xLines = this.screen.width / lineLength
     const yLines = this.screen.height / lineLength
@@ -137,6 +155,12 @@ export default class App extends Component {
     context.restore()
   }
 
+  /**
+     Draws the red boxes underneath the character, denoting the placement of
+     buildings
+     @param {CanvasRenderingContext2D} context
+     @param {number} lineLength - Number of pixel between each line
+  */
   drawBuildingLine(context, lineLength) {
     const squares = 2 * this.screen.width / lineLength
     const gridPosition = {
@@ -169,6 +193,7 @@ export default class App extends Component {
     context.restore()
   }
 
+  /** @param {Character} char */
   move(char) {
     // Character move
     char.move(keysToDirection(this.state.keys))
@@ -180,6 +205,10 @@ export default class App extends Component {
     }
   }
 
+  /**
+     @param {CanvasRenderingContext2D} context
+     @param {Character} char
+  */
   draw(context, char) {
     const lineLength = 100
     // draw building block
@@ -232,9 +261,5 @@ export default class App extends Component {
         />
       </div>
     )
-
-    // <div className="App-header">
-    // <img src={logo} className="App-logo" alt="logo" />
-    // </div>
   }
 }

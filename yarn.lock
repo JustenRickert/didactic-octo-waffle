@@ -2,6 +2,10 @@
 # yarn lockfile v1
 
 
+"@types/react@^16.0.2":
+  version "16.0.2"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-16.0.2.tgz#0b31a73cdde6272b719e5b05a7df6d1e2654a804"
+
 abab@^1.0.3:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/abab/-/abab-1.0.3.tgz#b81de5f7274ec4e756d797cd834f303642724e5d"
@@ -2406,7 +2410,7 @@ fb-watchman@^2.0.0:
   dependencies:
     bser "^2.0.0"
 
-fbjs@^0.8.4, fbjs@^0.8.9:
+fbjs@^0.8.9:
   version "0.8.14"
   resolved "https://registry.yarnpkg.com/fbjs/-/fbjs-0.8.14.tgz#d1dbe2be254c35a91e09f31f9cd50a40b2a0ed1c"
   dependencies:
@@ -4899,12 +4903,6 @@ rc@^1.0.1, rc@^1.1.6, rc@^1.1.7:
     minimist "^1.2.0"
     strip-json-comments "~2.0.1"
 
-react-animation-frame@^0.2.1:
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/react-animation-frame/-/react-animation-frame-0.2.1.tgz#6b43eda33d99b0f23b580f91c118afdfd0487d39"
-  dependencies:
-    react "15.4.2"
-
 react-dev-utils@^3.0.2:
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/react-dev-utils/-/react-dev-utils-3.0.2.tgz#1a42263e9b6aa11dcb45d69dfe5eb1b354bd5531"
@@ -4990,14 +4988,6 @@ react-scripts@1.0.10:
     whatwg-fetch "2.0.3"
   optionalDependencies:
     fsevents "1.1.2"
-
-react@15.4.2:
-  version "15.4.2"
-  resolved "https://registry.yarnpkg.com/react/-/react-15.4.2.tgz#41f7991b26185392ba9bae96c8889e7e018397ef"
-  dependencies:
-    fbjs "^0.8.4"
-    loose-envify "^1.1.0"
-    object-assign "^4.1.0"
 
 react@^15.6.1:
   version "15.6.1"
