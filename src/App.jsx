@@ -2,7 +2,8 @@ import React, {Component} from "react"
 import "./App.css"
 
 import Character from "./Character"
-import {clamp} from "./helper"
+import {clamp, directionMatrixToAngle, keysToDirection} from "./helper"
+import {drawMap, drawCharacter, drawScene} from "./Scene"
 
 const KEY = {
   LEFT: 37,
@@ -16,33 +17,15 @@ const KEY = {
   SPACE: 32
 }
 
-/**
-   @typedef {Object} Keys - Has boolean properties indicating keypress status
-   @property {boolean} left - KEY.LEFT
-   @property {boolean} right - KEY.RIGHT
-   @property {boolean} up - KEY.UP
-   @property {boolean} down - KEY.DOWN
-*/
-
-/** @param {Keys} keys */
-function keysToDirection(keys) {
-  const direction = {x: 0, y: 0}
-  if (keys.left) direction.x = -1
-  if (keys.right) direction.x = 1
-  if (keys.up) direction.y = -1
-  if (keys.down) direction.y = 1
-  return direction
-}
-
 export default class App extends Component {
   constructor() {
     super()
     this.state = {
-      /* screen: {
-       *   width: 500,
-       *   height: 500,
-       *   ratio: window.devicePixelRation || 1
-       * },*/
+      window: {
+        width: window.innerWidth,
+        height: window.innerHeight,
+        ratio: window.devicePixelRatio || 1
+      },
       startingTime: new Date(),
       context: null,
       keys: {
@@ -53,20 +36,29 @@ export default class App extends Component {
       }
     }
 
-    this.screen = {
-      width: 500,
-      height: 500,
+    this.map = {
+      height: 1000,
       ratio: window.devicePixelRatio || 1
     }
 
+    this.window = {}
+
+    this.scene = {
+      x: 0,
+      y: 0,
+      width: 200,
+      height: 200
+    }
+
     this.character = new Character({
-      position: {x: this.screen.width / 2, y: this.screen.height / 2},
+      position: {x: this.scene.width / 2, y: this.scene.height / 2},
       speed: 5
     })
-    this.camera = {
-      x: (this.screen.height + this.character.position.x) / 3,
-      y: (this.screen.height + this.character.position.y) / 3
-    }
+
+    // this.camera = {
+    //   x: (this.screen.height + this.character.position.x) / 3,
+    //   y: (this.screen.height + this.character.position.y) / 3
+    // }
   }
 
   handleResize(value, e) {
@@ -120,133 +112,144 @@ export default class App extends Component {
     /* this.createObject(character, "character")*/
   }
 
-  /**
-     Draws the lines across the whole board.
-     @param {CanvasRenderingContext2D} context
-     @param {number} lineLength - Number of pixel between each line
-   */
-  drawLines(context, lineLength) {
-    const xLines = this.screen.width / lineLength
-    const yLines = this.screen.height / lineLength
+  // /**
+  //    Draws the lines across the whole board.
+  //    @param {CanvasRenderingContext2D} context
+  //    @param {number} lineDistance - Number of pixel between each line
+  //  */
+  // drawLines(context, lineDistance) {
+  //   const xLines = this.screen.width / lineDistance
+  //   const yLines = this.screen.height / lineDistance
 
-    // Draw
-    context.save()
-    context.translate(this.camera.x, this.camera.y)
-    context.strokeStyle = "#ffffff"
-    context.fillStyle = "#000000"
-    context.lineWidth = 2
+  //   // Draw
+  //   context.save()
+  //   context.translate(this.camera.x, this.camera.y)
+  //   context.strokeStyle = "#ffffff"
+  //   context.fillStyle = "#000000"
+  //   context.lineWidth = 2
 
-    for (let x = 0; x <= xLines; x++) {
-      context.beginPath()
-      context.moveTo(lineLength * x, 0)
-      context.lineTo(lineLength * x, this.screen.height)
-      context.closePath()
-      context.fill()
-      context.stroke()
-    }
-    for (let y = 0; y <= yLines; y++) {
-      context.beginPath(0, lineLength * y)
-      context.moveTo(0, lineLength * y)
-      context.lineTo(this.screen.width, lineLength * y)
-      context.closePath()
-      context.fill()
-      context.stroke()
-    }
-    context.restore()
-  }
+  //   for (let x = 0; x <= xLines; x++) {
+  //     context.beginPath()
+  //     context.moveTo(lineDistance * x, 0)
+  //     context.lineTo(lineDistance * x, this.screen.height)
+  //     context.closePath()
+  //     context.fill()
+  //     context.stroke()
+  //   }
+  //   for (let y = 0; y <= yLines; y++) {
+  //     context.beginPath(0, lineDistance * y)
+  //     context.moveTo(0, lineDistance * y)
+  //     context.lineTo(this.screen.width, lineDistance * y)
+  //     context.closePath()
+  //     context.fill()
+  //     context.stroke()
+  //   }
+  //   context.restore()
+  // }
 
-  /**
-     Draws the red boxes underneath the character, denoting the placement of
-     buildings
-     @param {CanvasRenderingContext2D} context
-     @param {number} lineLength - Number of pixel between each line
-  */
-  drawBuildingLine(context, lineLength) {
-    const squares = 2 * this.screen.width / lineLength
-    const gridPosition = {
-      x: clamp(
-        Math.floor(
-          squares *
-            (this.character.position.x - this.camera.x) /
-            this.screen.width
-        )
-      )(0, 9),
-      y: clamp(
-        Math.floor(
-          squares *
-            (this.character.position.y - this.camera.y) /
-            this.screen.height
-        )
-      )(0, 9)
-    }
-    context.save()
-    context.strokeStyle = "red"
-    context.lineWidth = "5"
-    context.translate(this.camera.x, this.camera.y)
-    context.rect(
-      lineLength * gridPosition.x / 2,
-      lineLength * gridPosition.y / 2,
-      lineLength / 2,
-      lineLength / 2
-    )
-    context.stroke()
-    context.restore()
-  }
+  // /**
+  //    Draws the red boxes underneath the character, denoting the placement of
+  //    buildings
+  //    @param {CanvasRenderingContext2D} context
+  //    @param {number} lineDistance - Number of pixels between each line
+  // */
+  // drawBuildingLine(context, lineDistance) {
+  //   const squares = 2 * this.screen.width / lineDistance
+  //   const gridPosition = {
+  //     x: clamp(
+  //       Math.floor(
+  //         squares *
+  //           (this.character.position.x - this.camera.x) /
+  //           this.screen.width
+  //       )
+  //     )(0, 9),
+  //     y: clamp(
+  //       Math.floor(
+  //         squares *
+  //           (this.character.position.y - this.camera.y) /
+  //           this.screen.height
+  //       )
+  //     )(0, 9)
+  //   }
+  //   context.save()
+  //   context.strokeStyle = "red"
+  //   context.lineWidth = "5"
+  //   context.translate(this.camera.x, this.camera.y)
+  //   context.rect(
+  //     lineDistance * gridPosition.x / 2,
+  //     lineDistance * gridPosition.y / 2,
+  //     lineDistance / 2,
+  //     lineDistance / 2
+  //   )
+  //   context.stroke()
+  //   context.restore()
+  // }
 
-  /** @param {Character} char */
-  move(char) {
-    // Character move
-    char.move(keysToDirection(this.state.keys))
+  // /**
+  //    @param {CanvasRenderingContext2D} context
+  //    @param {Character} char
+  // */
+  // draw(context, char) {
+  //   const lineLength = 100
+  //   // draw building block
+  //   this.drawBuildingLine(context, lineLength)
 
-    // Camera move
-    this.camera = {
-      x: (500 / 2 - this.character.position.x) / 3,
-      y: (500 / 2 - this.character.position.y) / 3
-    }
-  }
+  //   // lines
+  //   this.drawLines(context, lineLength)
 
-  /**
-     @param {CanvasRenderingContext2D} context
-     @param {Character} char
-  */
-  draw(context, char) {
-    const lineLength = 100
-    // draw building block
-    this.drawBuildingLine(context, lineLength)
+  //   // draw character
+  //   char.draw(context)
+  // }
 
-    // lines
-    this.drawLines(context, lineLength)
-
-    // draw character
-    char.draw(context)
-  }
-
-  update() {
-    const context = this.state.context
-    const char = this.character
+  /** */
+  drawDebugInfo() {
     const frameTime = new Date()
-
+    const context = this.state.context
     // info
     context.save()
+    context.fillStyle = "#fff"
+    context.fillRect(0, 0, 100, this.state.window.height)
     context.fillStyle = "red"
+    context.fillText(JSON.stringify(this.character.position), 10, 200)
     context.fillText(
       (frameTime.getTime() - this.state.startingTime.getTime()) / 1000,
       10,
       250
     )
-    context.fillText(JSON.stringify(char.position), 10, 200)
+    context.fillText(JSON.stringify(this.scene), 10, 300)
     context.restore()
+  }
 
-    // Motion trail
-    context.save()
-    context.fillStyle = "#000"
-    context.globalAlpha = 0.4
-    context.fillRect(0, 0, this.screen.width, this.screen.height)
-    context.globalAlpha = 1
-    context.restore()
+  updateScenePosition() {
+    this.scene = {
+      x: this.character.position.x - this.character.startingPosition.x,
+      y: this.character.position.y - this.character.startingPosition.y,
+      width: this.scene.width,
+      height: this.scene.height
+    }
+  }
 
-    this.move(char)
-    this.draw(context, char)
+  update() {
+    this.character.move(keysToDirection(this.state.keys))
+    this.updateScenePosition()
+
+    const window = {
+      x: this.state.window.width,
+      y: this.state.window.height
+    }
+
+    drawScene(this.state.context, this.state.window, this.character, this.scene)
+    // drawMap(this.state.context, this.screen)
+    // drawCharacter(this.character, this.state.context)
+    this.drawDebugInfo(this.character)
+
+    // // Background
+    // // context.fillStyle = "#000"
+    // // context.globalAlpha = 0.4
+    // // context.globalAlpha = 1
+
+    // this.move(char)
+    // this.draw(context, char)
 
     requestAnimationFrame(() => this.update())
   }
@@ -256,8 +259,8 @@ export default class App extends Component {
       <div className="App">
         <canvas
           ref="canvas"
-          width={this.screen.width * this.screen.ratio}
-          height={this.screen.height * this.screen.ratio}
+          width={this.state.window.width * this.state.window.ratio}
+          height={this.state.window.height * this.state.window.ratio}
         />
       </div>
     )
