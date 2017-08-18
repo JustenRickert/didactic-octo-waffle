@@ -1,31 +1,10 @@
-import Character from "./Character"
-
-/**
-   @typedef {Object} Screen -
-   @property {number} width -
-   @property {number} height -
- */
-
-/**
-   Position vector for 2 dimensional space
-
-   @typedef {Object} Position -
-   @property {number} x - Horizontal position
-   @property {number} y - Vertical position
- */
-
-/**
-
-   @typedef {Object} Square -
-   @property {number} width -
-   @property {number} height -
- */
+import * as PIXI from "pixi.js"
 
 /**
    @param {CanvasRenderingContext2D} context -
-   @param {Square} window -
-   @param {Character} character -
-   @param {Position} scene -
+   @param {{width: number, height: number}} window -
+   @param {{rotation: number}} character -
+   @param {{x: number, y: number}} scene -
  */
 export function drawScene(context, window, character, scene) {
   context.save()
@@ -43,8 +22,8 @@ export function drawScene(context, window, character, scene) {
 /**
    Draws the full map onto the screen. (Ideally we'll only want to draw a
    scene.)
-   @param {CanvasRenderingContext2D} context
-   @param {Screen} screen
+   @param {CanvasRenderingContext2D} context -
+   @param {{height: number, width: number}} screen -
  */
 export function drawMap(context, screen) {
   context.save()
@@ -55,27 +34,36 @@ export function drawMap(context, screen) {
 
 /**
    Draws the Character, shaped like an arrow.
-   @param {Character} character
-   @param {CanvasRenderingContext2D} context
-   @param {Position} position
+   @param {Character} character -
+   @param {CanvasRenderingContext2D} context -
+   @param {{x: number, y: number}} position -
  */
 export function drawCharacter(character, context, position) {
-  context.save()
-  context.translate(position.x, position.y)
-  context.rotate(character.rotation * Math.PI / 180)
-  context.strokeStyle = "#ffffff"
-  context.fillStyle = "#000000"
-  context.lineWidth = 2
-  context.beginPath()
-  context.moveTo(0, -15)
-  context.lineTo(10, 10)
-  context.lineTo(5, 7)
-  context.lineTo(-5, 7)
-  context.lineTo(-10, 10)
-  context.closePath()
-  context.fill()
-  context.stroke()
-  context.restore()
+  const graphics = new PIXI.Graphics()
+  graphics.beginFill(0x00ff00)
+  graphics.moveTo(0, -15)
+  graphics.lineTo(10, 10)
+  graphics.lineTo(5, 7)
+  graphics.lineTo(-5, 7)
+  graphics.lineTo(-10, 10)
+  graphics.endFill()
+
+  // context.save()
+  // context.translate(position.x, position.y)
+  // context.rotate(character.rotation * Math.PI / 180)
+  // context.strokeStyle = "#ffffff"
+  // context.fillStyle = "#000000"
+  // context.lineWidth = 2
+  // context.beginPath()
+  // context.moveTo(0, -15)
+  // context.lineTo(10, 10)
+  // context.lineTo(5, 7)
+  // context.lineTo(-5, 7)
+  // context.lineTo(-10, 10)
+  // context.closePath()
+  // context.fill()
+  // context.stroke()
+  // context.restore()
 }
 
 // function drawBuildingLine(context, lineDistance) {

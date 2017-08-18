@@ -2,22 +2,8 @@ import {directionMatrixToAngle, clone} from "./helper"
 
 /**
    Position vector for 2 dimensional space
-   @typedef {Object} Position -
-   @property {number} x - Horizontal position
-   @property {number} y - Vertical position
-*/
-
-/**
-   Direction vector for 2 dimensional space
-   @typedef {Object} Direction -
-   @property {number} x - Horizontal direction
-   @property {number} y - Vertical direction
-*/
-
-/**
-   Position vector for 2 dimensional space
    @typedef {Object} CharacterArgument -
-   @property {Position} position - Starting position of the character.
+   @property {{x: number, y: number}} position - Starting position of the character.
    @property {number} speed - Movement speed of the character.
 */
 
@@ -31,12 +17,12 @@ export default class Character {
     this.position = args.position
     this.speed = args.speed
 
-    this.rotation = 180
+    this.rotation = 0
   }
 
   /**
      Moves the character in the direction
-     @param {Direction} direction -
+     @param {{x: number, y: number}} direction -
   */
   move(direction) {
     if (JSON.stringify(direction) !== JSON.stringify({x: 0, y: 0}))

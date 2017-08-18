@@ -1,23 +1,7 @@
 /**
-   Direction vector for 2 dimensional space
-   @typedef {Object} Direction -
-   @property {number} x - Horizontal direction
-   @property {number} y - Vertical direction
- */
-
-/**
-   @typedef {Object} Keys - Has boolean properties indicating keypress status
-   @property {boolean} left - KEY.LEFT
-   @property {boolean} right - KEY.RIGHT
-   @property {boolean} up - KEY.UP
-   @property {boolean} down - KEY.DOWN
-*/
-
-
-/**
    Returns the angle associated to the direction vector. So if an arrow points
    to the left, that is considered 0 degrees.
-   @param {Direction} direction -
+   @param {{x: number, y: number}} direction -
    @return {number} angle
  */
 export function directionMatrixToAngle(direction) {
@@ -33,12 +17,18 @@ export function directionMatrixToAngle(direction) {
   ]
   let angle = 0
   for (let d of directions) {
-    if (JSON.stringify(d) === JSON.stringify(direction)) return angle
-    angle += 45
+    if (JSON.stringify(d) === JSON.stringify(direction))
+      return 2 * Math.PI * angle
+    angle += 1 / 8
   }
 }
 
-/** @param {Keys} keys */
+/** @param {{
+    left: boolean,
+    right: boolean,
+    up: boolean,
+    down: boolean}} keys
+ */
 export function keysToDirection(keys) {
   const direction = {x: 0, y: 0}
   if (keys.left) direction.x = -1
@@ -61,11 +51,9 @@ export const clamp = number => (
 /**
    @param {Object} obj
    @return {Object}
-*/
+ */
 export const clone = obj => {
   let newObj = {}
-  for (let attr in obj)
-    newObj[attr] = obj[attr]
+  for (let attr in obj) newObj[attr] = obj[attr]
   return newObj
 }
-
