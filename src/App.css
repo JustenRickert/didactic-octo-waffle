@@ -5,7 +5,36 @@ html, body {
 }
 
 .App {
-  text-align: center;
+  display: flex;
+  flex-direction: row;
+}
+
+.App .list {
+    background-color: blue;
+    margin: 0;
+    padding: 0;
+    line-height: 1.3;
+
+}
+
+.App .list li {
+    list-style: none;
+    margin: 0 auto;
+    padding: 0 auto;
+}
+
+.App .list .list-item {
+    display: flex;
+    background-color: red;
+    margin: 0;
+    padding: 0.5em;
+    width: 100%;
+}
+
+.App .list .list-item .content {
+    background-color: #fff;
+    padding: 1em;
+    width: 100%;
 }
 
 .App-logo {

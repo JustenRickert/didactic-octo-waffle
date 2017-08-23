@@ -26,3 +26,8 @@ yarn start
 ```
 
 then open up http://localhost:3000/ on your browser.
+
+## Playing
+
+Use the arrow keys to move the character around the screen. The scene follows
+the character unless there isn't any space left for the screen to move over.

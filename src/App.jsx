@@ -20,6 +20,13 @@ const KEY = {
   SPACE: 32
 }
 
+const listItem = text =>
+  <li className="list-item">
+    <div className="content">
+      {text}
+    </div>
+  </li>
+
 export default class App extends Component {
   constructor() {
     super()
@@ -27,8 +34,8 @@ export default class App extends Component {
       scene: {
         x: 0,
         y: 0,
-        width: window.innerWidth,
-        height: window.innerHeight
+        width: 800,
+        height: 450
       },
       startingTime: new Date(),
       context: null,
@@ -134,9 +141,18 @@ export default class App extends Component {
   }
 
   render() {
+     /* TODO: I read that it is bad to use bind within the render function.
+        Something about it forcing updating of the component. Maybe in this case
+        it isn't so bad because I'm only doing it for handling resize. That
+        needs to be refactored anyway because it doesn't seem to be working */
     return (
       <div className="App">
+        <ul className="list">
+          {listItem("hello")}
+          {listItem("wassup")}
+        </ul>
         <Canvas
+          className="game"
           update={() => this.update()}
           handleResize={this.handleResize.bind(this, false)}
           character={this.character}
@@ -146,3 +162,4 @@ export default class App extends Component {
     )
   }
 }
+
