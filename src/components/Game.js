@@ -1,11 +1,9 @@
 import React, {Component} from "react"
-import "./App.css"
 
 import Canvas from "./Canvas"
-import Fuck from "./Fuck"
 
 import Character from "./Character"
-import {keysToDirection} from "./helper"
+import {keysToDirection} from "./../helper"
 import {drawScene} from "./Scene"
 
 const KEY = {
@@ -27,7 +25,7 @@ const listItem = text =>
     </div>
   </li>
 
-export default class App extends Component {
+export default class Game extends Component {
   constructor() {
     super()
     this.state = {
@@ -141,7 +139,7 @@ export default class App extends Component {
   }
 
   render() {
-     /* TODO: I read that it is bad to use bind within the render function.
+    /* TODO: I read that it is bad to use bind within the render function.
         Something about it forcing updating of the component. Maybe in this case
         it isn't so bad because I'm only doing it for handling resize. That
         needs to be refactored anyway because it doesn't seem to be working */
@@ -162,4 +160,3 @@ export default class App extends Component {
     )
   }
 }
-

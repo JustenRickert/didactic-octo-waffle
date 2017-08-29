@@ -4,7 +4,7 @@ import * as PIXI from "pixi.js"
 /**
    @param {PIXI.Graphics} graphics -
    @param {{position: {x: number, y: number}, rotation: number} character -
-   @param{{x: number, y: number, width: number, height: number}} scene
+   @param{{x: number, y: number, width: number, height: number}} scene -
  */
 function drawScene(graphics, scene, map) {
   const lineLength = 150
@@ -26,7 +26,7 @@ function drawScene(graphics, scene, map) {
 /**
    @param {PIXI.Graphics} graphics -
    @param {{position: {x: number, y: number}, rotation: number} character -
-   @param{{x: number, y: number, width: number, height: number}} scene
+   @param{{x: number, y: number, width: number, height: number}} scene -
  */
 function drawCharacter(graphics, character, scene, map) {
   // We want to set the character in the center of the screen, else have them
@@ -51,7 +51,6 @@ function drawCharacter(graphics, character, scene, map) {
 }
 
 /** @param {string} information */
-
 export default class Canvas extends Component {
   constructor(props) {
     super(props)

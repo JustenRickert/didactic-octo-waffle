@@ -1,4 +1,4 @@
-import {directionMatrixToAngle, clone} from "./helper"
+import {directionMatrixToAngle, clone} from "./../helper"
 
 /**
    Position vector for 2 dimensional space
@@ -10,12 +10,12 @@ import {directionMatrixToAngle, clone} from "./helper"
 /** Character is the main unit of the game. */
 export default class Character {
   /**
-     @param {CharacterArgument} args - Argument object to pass to the character.
+     @param {CharacterArgument} arg - Argument object to pass to the character.
    */
-  constructor(args) {
-    this.startingPosition = clone(args.position)
-    this.position = args.position
-    this.speed = args.speed
+  constructor(arg) {
+    this.startingPosition = clone(arg.position)
+    this.position = arg.position
+    this.speed = arg.speed
 
     this.rotation = 0
   }
