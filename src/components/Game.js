@@ -1,10 +1,11 @@
 import React, {Component} from "react"
+import PropTypes from "prop-types"
 
 import Canvas from "./Canvas"
 
-import Character from "./Character"
-import {keysToDirection} from "./../helper"
-import {drawScene} from "./Scene"
+// import Character from "./Character"
+import {keysToDirection, directionMatrixToAngle} from "./../helper"
+// import {drawScene} from "./Scene"
 
 const KEY = {
   LEFT: 37,
@@ -18,37 +19,32 @@ const KEY = {
   SPACE: 32
 }
 
-const listItem = text =>
+const listItem = text => (
   <li className="list-item">
-    <div className="content">
-      {text}
-    </div>
+    <div className="content">{text}</div>
   </li>
+)
 
 export default class Game extends Component {
-  constructor() {
-    super()
-    this.state = {
-      scene: {
-        x: 0,
-        y: 0,
-        width: 800,
-        height: 450
-      },
-      startingTime: new Date(),
-      context: null,
-      keys: {
-        left: false,
-        right: false,
-        up: false,
-        down: false
-      }
-    }
+  static propTypes = {
+    character: PropTypes.object.isRequired,
+    actions: PropTypes.object.isRequired
+  }
 
-    this.character = new Character({
-      position: {x: this.state.scene.width / 2, y: this.state.scene.height / 2},
-      speed: 5
-    })
+  state = {
+    scene: {
+      position: {x: 0, y: 0},
+      width: 800,
+      height: 450
+    },
+    startingTime: new Date(),
+    context: null,
+    keys: {
+      left: false,
+      right: false,
+      up: false,
+      down: false
+    }
   }
 
   handleResize(value, e) {
@@ -67,10 +63,6 @@ export default class Game extends Component {
     })
   }
 
-  /**
-     @param {boolean} value
-     @param {Event} e
-   */
   handleKeys(value, e) {
     let keys = this.state.keys
     if (e.keyCode === KEY.LEFT || e.keyCode === KEY.A) keys.left = value
@@ -107,7 +99,7 @@ export default class Game extends Component {
     context.fillStyle = "#fff"
     context.fillRect(0, 0, 100, this.state.window.height)
     context.fillStyle = "red"
-    context.fillText(JSON.stringify(this.character.position), 10, 200)
+    context.fillText(JSON.stringify(this.props.character.position), 10, 200)
     context.fillText(
       (frameTime.getTime() - this.state.startingTime.getTime()) / 1000,
       10,
@@ -118,23 +110,41 @@ export default class Game extends Component {
   }
 
   calculateScenePosition() {
-    let newSceneX = this.character.position.x - this.state.scene.width / 2
-    let newSceneY = this.character.position.y - this.state.scene.height / 2
+    const {position} = this.props.character
+    const {width, height} = this.state.scene
+    let newSceneX = position.x - width / 2
+    let newSceneY = position.y - height / 2
     if (newSceneX < 0) newSceneX = 0
     if (newSceneY < 0) newSceneY = 0
 
     this.setState({
       scene: {
-        x: newSceneX,
-        y: newSceneY,
-        width: this.state.scene.width,
-        height: this.state.scene.height
+        ...this.state.scene,
+        position: {
+          x: newSceneX,
+          y: newSceneY
+        }
       }
     })
   }
 
+  updateCharacterPosition(keys) {
+    const {character} = this.props
+    const direction = keysToDirection(keys)
+    const newPos = {
+      position: {
+        x: character.position.x + direction.x * character.speed,
+        y: character.position.y + direction.y * character.speed
+      }
+    }
+    this.props.actions.editCharacterPosition(newPos)
+    this.props.actions.editCharacterRotation({
+      rotation: directionMatrixToAngle(direction)
+    })
+  }
+
   update() {
-    this.character.move(keysToDirection(this.state.keys))
+    this.updateCharacterPosition(this.state.keys)
     this.calculateScenePosition()
   }
 
@@ -153,7 +163,7 @@ export default class Game extends Component {
           className="game"
           update={() => this.update()}
           handleResize={this.handleResize.bind(this, false)}
-          character={this.character}
+          character={this.props.character}
           scene={this.state.scene}
         />
       </div>

@@ -1,39 +1,38 @@
 import React, {Component} from "react"
+import PropTypes from "prop-types"
 import * as PIXI from "pixi.js"
 
-/**
-   @param {PIXI.Graphics} graphics -
-   @param {{position: {x: number, y: number}, rotation: number} character -
-   @param{{x: number, y: number, width: number, height: number}} scene -
- */
 function drawScene(graphics, scene, map) {
   const lineLength = 150
   graphics.clear()
 
   graphics.lineStyle(1, 0x000000)
-  for (let xBar = -scene.x; xBar < scene.width + scene.x; xBar += lineLength) {
+  for (
+    let xBar = -scene.position.x;
+    xBar < scene.width + scene.position.x;
+    xBar += lineLength
+  ) {
     graphics.moveTo(xBar, 0)
     graphics.lineTo(xBar, scene.height)
     graphics.endFill()
   }
-  for (let yBar = -scene.y; yBar < scene.height + scene.y; yBar += lineLength) {
+  for (
+    let yBar = -scene.position.y;
+    yBar < scene.height + scene.position.y;
+    yBar += lineLength
+  ) {
     graphics.moveTo(0, yBar)
     graphics.lineTo(scene.width, yBar)
     graphics.endFill()
   }
 }
 
-/**
-   @param {PIXI.Graphics} graphics -
-   @param {{position: {x: number, y: number}, rotation: number} character -
-   @param{{x: number, y: number, width: number, height: number}} scene -
- */
 function drawCharacter(graphics, character, scene, map) {
   // We want to set the character in the center of the screen, else have them
   // move freely around the scene
   let x, y
-  scene.x <= 0 ? (x = character.position.x) : (x = scene.width / 2)
-  scene.y <= 0 ? (y = character.position.y) : (y = scene.height / 2)
+  scene.position.x <= 1 ? (x = character.position.x) : (x = scene.width / 2)
+  scene.position.y <= 1 ? (y = character.position.y) : (y = scene.height / 2)
 
   graphics.clear()
   graphics.beginFill(0xff3300)
@@ -50,26 +49,29 @@ function drawCharacter(graphics, character, scene, map) {
   graphics.rotation = character.rotation
 }
 
-/** @param {string} information */
 export default class Canvas extends Component {
+  /* We need this constructor because there is no way to set debug position with
+     the constructor function */
   constructor(props) {
     super(props)
-    this.app = new PIXI.Application(
-      this.props.scene.width,
-      this.props.scene.height,
-      {backgroundColor: 0x1099bb, antialias: false}
-    )
 
-    this.animate = this.animate.bind(this)
-    this.character = props.character
-    /**
-       @type {{x: number, y: number, width: number, height: number}} scene */
-    this.sceneGraphics = new PIXI.Graphics()
-    this.charGraphics = new PIXI.Graphics()
+    this.debugText = new PIXI.Text(JSON.stringify(props.character.position))
+    this.debugText.x = 30
+    this.debugText.y = 30
+  }
 
-    this.debugtext = new PIXI.Text(JSON.stringify(this.character.position))
-    this.debugtext.x = 30
-    this.debugtext.y = 30
+  static propTypes = {
+    character: PropTypes.object.isRequired
+  }
+
+  state = {
+    animate: this.animate.bind(this),
+    app: new PIXI.Application(this.props.scene.width, this.props.scene.height, {
+      backgroundColor: 0x1099bb,
+      antialias: false
+    }),
+    sceneGraphics: new PIXI.Graphics(),
+    charGraphics: new PIXI.Graphics()
   }
 
   /**
@@ -77,36 +79,40 @@ export default class Canvas extends Component {
      and hook up the PixiJS renderer
    */
   componentDidMount() {
-    window.addEventListener("resize", this.handleResize.bind(this, false))
+    /* window.addEventListener("resize", this.handleResize.bind(this, false))*/
 
-    this.refs.gameCanvas.appendChild(this.app.view)
-    this.app.stage.addChild(
-      this.sceneGraphics,
-      this.charGraphics,
-      this.debugtext
+    this.refs.gameCanvas.appendChild(this.state.app.view)
+    this.state.app.stage.addChild(
+      this.state.sceneGraphics,
+      this.state.charGraphics,
+      this.debugText
     )
-    this.animate()
+    this.state.animate()
   }
 
-  handleResize(value, e) {
-    this.app.renderer.view.width = window.innerWidth
-    this.app.renderer.view.height = window.innerHeight
-    this.props.handleResize(value, e)
-  }
-
-  /**
-     Animation loop for updating Pixi Canvas
+  /* handleResize(value, e) {
+   *   this.state.app.renderer.view.width = window.innerWidth
+   *   this.state.app.renderer.view.height = window.innerHeight
+   *   this.props.handleResize(value, e)
+   * }
    */
+
+  /** Animation loop for updating Pixi Canvas */
   animate() {
     requestAnimationFrame(() => this.animate())
+
     this.props.update()
 
-    this.app.renderer.render(this.app.stage)
-    drawScene(this.sceneGraphics, this.props.scene)
-    drawCharacter(this.charGraphics, this.character, this.props.scene)
-    this.debugtext.text = JSON.stringify({
-      x: this.character.position.x,
-      y: this.character.position.y,
+    this.state.app.renderer.render(this.state.app.stage)
+    drawScene(this.state.sceneGraphics, this.props.scene)
+    drawCharacter(
+      this.state.charGraphics,
+      this.props.character,
+      this.props.scene
+    )
+    this.debugText.text = JSON.stringify({
+      x: this.props.character.position.x,
+      y: this.props.character.position.y,
       scene: this.props.scene
     })
   }

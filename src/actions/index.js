@@ -7,3 +7,8 @@ export const editCharacterSpeed = ({speed}) => ({
   type: "EDIT_CHARACTER_SPEED",
   speed
 })
+export const editCharacterRotation = ({rotation}) => ({
+  type: "EDIT_CHARACTER_ROTATION",
+  rotation
+})
+
